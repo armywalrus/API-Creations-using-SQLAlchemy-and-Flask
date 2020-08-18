@@ -49,19 +49,26 @@ def precip():
     last_year_precip = session.query(Measurements.date, Measurements.prcp).filter(Measurements.date >= year_ago).all()  
     return jsonify(last_year_precip)
 
-    # @app.route("/api/v1.0/stations<br")
-    # def stations():
+@app.route("/api/v1.0/stations")
+def stations():
+    active_station = session.query(Measurements.station, func.count(Measurements.station)).group_by(Measurements.station).\
+    order_by(func.count(Measurements.station).desc()).all()
+    return jsonify(active_station)
+    
+@app.route("/api/v1.0/tobs")
+def temps():
+    lowest_temp = session.query(Measurements.station, func.min(Measurements.tobs), func.max(Measurements.tobs), func.avg(Measurements.tobs)).\
+                            filter(Measurements.station == "USC00519281").all()
+    return jsonify(lowest_temp)
+
+# @app.route("/api/v1.0/<start>")
+# def start():
 
 
-    # @app.route("/api/v1.0/tobs")
-    # def temps():
+# @app.route("/api/v1.0/<start>/<end>")
+# def end():
 
 
-    # @app.route("/api/v1.0/<start>")
-    # def start():
 
-
-    # @app.route("/api/v1.0/<start>/<end>")
-    # def end():
 if __name__ == '__main__':
     app.run(debug=True)
