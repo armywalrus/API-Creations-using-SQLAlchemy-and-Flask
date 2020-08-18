@@ -50,6 +50,12 @@ def welcome():
 def precip():
     year_ago = dt.date(2017, 8, 23) - dt.timedelta(days=365)
     last_year_precip = session.query(Measurements.date, Measurements.prcp).filter(Measurements.date >= year_ago).all() 
+    all_precip = []
+    for precipitation, date in last_year_precip:
+        all_precip_dict = {}
+        all_precip_dict["date"] = date
+        all_precip_dict["precipitation"] = precipitation
+        all_precip.append(all_precip_dict)
     session.close() 
     return jsonify(last_year_precip)
 
@@ -57,12 +63,6 @@ def precip():
 def stations():
     active_station = session.query(Measurements.station, func.count(Measurements.station)).group_by(Measurements.station).\
     order_by(func.count(Measurements.station).desc()).all()
-    all_stations = []
-    for station, count in results:
-        all_stations = {}
-        all_stations["station"] = station
-        all_stations["count"] = count
-        all_stations.append(all_stations)
     session.close() 
     return jsonify(active_station)
     
