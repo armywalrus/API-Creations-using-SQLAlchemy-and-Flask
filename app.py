@@ -20,7 +20,7 @@ Base.prepare(engine, reflect=True)
 
 # Save reference to the table
 Measurements = Base.classes.measurement
-Station = Base.classes.station
+Stations = Base.classes.station
 
 #################################################
 # Flask Setup
@@ -43,11 +43,11 @@ def welcome():
         f"/api/v1.0/<start>/<end><br/>"
     )
 
-    @app.route("/api/v1.0/precipitation")
-    def precip():
-        year_ago = dt.date(2017, 8, 23) - dt.timedelta(days=365)
-        last_year_precip = session.query(Measurements.date, Measurements.prcp).filter(Measurements.date >= year_ago).all()  
-        return jsonify(last_year_precip)
+@app.route("/api/v1.0/precipitation")
+def precip():
+    year_ago = dt.date(2017, 8, 23) - dt.timedelta(days=365)
+    last_year_precip = session.query(Measurements.date, Measurements.prcp).filter(Measurements.date >= year_ago).all()  
+    return jsonify(last_year_precip)
 
     # @app.route("/api/v1.0/stations<br")
     # def stations():
@@ -63,10 +63,5 @@ def welcome():
 
     # @app.route("/api/v1.0/<start>/<end>")
     # def end():
-
-
-
-
-
 if __name__ == '__main__':
     app.run(debug=True)
