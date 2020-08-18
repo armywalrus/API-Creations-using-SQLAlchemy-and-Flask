@@ -57,7 +57,7 @@ def precip():
         all_precip_dict["precipitation"] = precipitation
         all_precip.append(all_precip_dict)
     session.close() 
-    return jsonify(last_year_precip)
+    return jsonify(all_precip)
 
 @app.route("/api/v1.0/stations")
 def stations():
