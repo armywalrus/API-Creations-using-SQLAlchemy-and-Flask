@@ -42,8 +42,8 @@ def welcome():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/start<br/>"
-        f"/api/v1.0/start/end<br/>"
+        f"/api/v1.0/<start><br/>"
+        f"/api/v1.0<start>/<end><br/>"
     )
 
 @app.route("/api/v1.0/precipitation")
@@ -73,8 +73,8 @@ def temps():
     session.close() 
     return jsonify(lowest_temp)
 
-@app.route("/api/v1.0/start")
-def start():
+@app.route("/api/v1.0/<start>")
+def start(start):
     #Design a query that lists the min/max/avg totals for each station 
     sel = [Measurements.station, 
        func.min(Measurements.tobs), 
@@ -82,27 +82,24 @@ def start():
        func.avg(Measurements.tobs)]
        
     start = session.query(*sel).\
-        group_by(Measurements.station).\
-        order_by(Measurements.station).all()
+        filter(Measurements.date >= (start)).all()
     session.close()  
     return jsonify(start) 
 
-# @app.route("/api/v1.0/start/end")
-# def end():
-    #Design a query that lists the min/max/avg totals for each station 
-    # sel = [Measurements.station, 
-    #    func.min(Measurements.tobs), 
-    #    func.max(Measurements.tobs), 
-    #    func.avg(Measurements.tobs)]
+# @app.route("/api/v1.0/<start>/<end>")
+# def start(start, end):
+#     #Design a query that lists the min/max/avg totals for each station 
+#     sel = [Measurements.station, 
+#     func.min(Measurements.tobs), 
+#     func.max(Measurements.tobs), 
+#     func.avg(Measurements.tobs)]
        
-    # start = session.query(*sel).\
-    #     group_by(Measurements.station).\
-    #     order_by(Measurements.station).all()
-    # session.close()  
-    # return jsonify(start) 
-
-
-
+#     start = session.query(*sel).\
+#         filter(Measurements.date >= (start)).all()
+#     end = session.query(*sel).\
+#         filter(Measurements.date <= (end)).all()
+#     session.close()  
+#     return jsonify(start) 
 
 if __name__ == '__main__':
     app.run(debug=True)
