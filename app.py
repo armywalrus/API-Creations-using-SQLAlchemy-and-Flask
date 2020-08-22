@@ -86,20 +86,20 @@ def start(start):
     session.close()  
     return jsonify(start) 
 
-# @app.route("/api/v1.0/<start>/<end>")
-# def start(start, end):
-#     #Design a query that lists the min/max/avg totals for each station 
-#     sel = [Measurements.station, 
-#     func.min(Measurements.tobs), 
-#     func.max(Measurements.tobs), 
-#     func.avg(Measurements.tobs)]
+@app.route("/api/v1.0/<start>/<end>")
+def start(start, end):
+    #Design a query that lists the min/max/avg totals for each station 
+    sel = [Measurements.station, 
+    func.min(Measurements.tobs), 
+    func.max(Measurements.tobs), 
+    func.avg(Measurements.tobs)]
        
-#     start = session.query(*sel).\
-#         filter(Measurements.date >= (start)).all()
-#     end = session.query(*sel).\
-#         filter(Measurements.date <= (end)).all()
-#     session.close()  
-#     return jsonify(start) 
+    start = session.query(*sel).\
+        filter(Measurements.date >= (start)).all()
+    end = session.query(*sel).\
+        filter(Measurements.date <= (end)).all()
+    session.close()  
+    return jsonify(start) 
 
 if __name__ == '__main__':
     app.run(debug=True)
