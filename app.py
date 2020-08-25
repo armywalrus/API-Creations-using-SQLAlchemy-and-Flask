@@ -43,7 +43,7 @@ def welcome():
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
         f"/api/v1.0/<start><br/>"
-        f"/api/v1.0/<start>/<end><br/>"
+        f"/api/v1.0/<begin>/<end><br/>"
     )
 
 @app.route("/api/v1.0/precipitation")
@@ -53,8 +53,8 @@ def precip():
     all_precip = []
     for precipitation, date in last_year_precip:
         all_precip_dict = {}
-        all_precip_dict["date"] = precipitation
-        all_precip_dict["precipitation"] = date
+        all_precip_dict["Date"] = precipitation
+        all_precip_dict["Precipitation"] = date
         all_precip.append(all_precip_dict)
     session.close() 
     return jsonify(all_precip)
@@ -75,7 +75,6 @@ def temps():
 
 @app.route("/api/v1.0/<start>")
 def start(start):
-    #Design a query that lists the min/max/avg totals for each station 
     sel = [Measurements.station, 
        func.min(Measurements.tobs), 
        func.max(Measurements.tobs), 
@@ -86,7 +85,7 @@ def start(start):
     session.close()  
     return jsonify(start) 
 
-@app.route("/api/v1.0/<start>/<end>")
+@app.route("/api/v1.0/<begin>/<end>")
 def bothdates(begin, end):
     sel = [Measurements.station, 
        func.min(Measurements.tobs), 
@@ -97,26 +96,10 @@ def bothdates(begin, end):
         filter(Measurements.date >= (begin)).all()
     end = session.query(*sel).\
         filter(Measurements.date <= (end)).all()
-    session.close()  
-    return jsonify(bothdates) 
+    session.close()
 
-# @app.route("/api/v1.0/<start>/<end>")
-# def start(start):
-#     #Design a query that lists the min/max/avg totals for each station 
-#     sel = [Measurements.station, 
-#     func.min(Measurements.tobs), 
-#     func.max(Measurements.tobs), 
-#     func.avg(Measurements.tobs)]
-       
-#     start = session.query(*sel).\
-#         filter(Measurements.date >= (start)).all()
+    return jsonify(begin, end) 
 
-# def end(end):
-#     end = session.query(*sel).\
-#         filter(Measurements.date >= (start)).\
-#         filter(Measurements.date <= (end)).all()
-#     session.close()  
-#     return jsonify(start) 
 
 if __name__ == '__main__':
     app.run(debug=True)
