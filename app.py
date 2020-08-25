@@ -43,7 +43,7 @@ def welcome():
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
         f"/api/v1.0/<start><br/>"
-        f"/api/v1.0<start>/<end><br/>"
+        f"/api/v1.0/<start>/<end><br/>"
     )
 
 @app.route("/api/v1.0/precipitation")
@@ -53,8 +53,8 @@ def precip():
     all_precip = []
     for precipitation, date in last_year_precip:
         all_precip_dict = {}
-        all_precip_dict["date"] = date
-        all_precip_dict["precipitation"] = precipitation
+        all_precip_dict["date"] = precipitation
+        all_precip_dict["precipitation"] = date
         all_precip.append(all_precip_dict)
     session.close() 
     return jsonify(all_precip)
@@ -87,14 +87,18 @@ def start(start):
     return jsonify(start) 
 
 @app.route("/api/v1.0/<start>/<end>")
-def startend(begin, end):
-       
+def bothdates(begin, end):
+    sel = [Measurements.station, 
+       func.min(Measurements.tobs), 
+       func.max(Measurements.tobs), 
+       func.avg(Measurements.tobs)]
+
     begin = session.query(*sel).\
         filter(Measurements.date >= (begin)).all()
     end = session.query(*sel).\
         filter(Measurements.date <= (end)).all()
     session.close()  
-    return jsonify(startend) 
+    return jsonify(bothdates) 
 
 # @app.route("/api/v1.0/<start>/<end>")
 # def start(start):
